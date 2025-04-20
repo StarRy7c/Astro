@@ -1,168 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Live Match - Astro Stream</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #0f172a;
-      color: #fff;
-      text-align: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #242424, #3b5998);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
 
-    header {
-      background: #1e293b;
-      padding: 20px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
+        /* Glowing Effect for Message */
+        .loading-message {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffcc00;
+            margin-bottom: 10px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00;
+            animation: glow 1.5s infinite alternate;
+        }
 
-    header h1 {
-      margin: 0;
-      font-size: 2em;
-      color: #38bdf8;
-    }
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00; }
+            100% { box-shadow: 0 0 15px #ffcc00, 0 0 25px #ffcc00, 0 0 35px #ffcc00; }
+        }
 
-    iframe {
-      width: 100%;
-      height: 80vh;
-      border: none;
-      margin-top: 10px;
-    }
+        /* Video Player Styling */
+        .player-container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+        }
 
-    .telegram-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #0088cc;
-      color: white;
-      font-weight: bold;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 30px;
-      text-decoration: none;
-      margin: 20px auto;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    }
+        .player-container iframe {
+            border-radius: 15px;
+            width: 100%;
+            height: 100%;
+        }
 
-    .telegram-button:hover {
-      background: #0074b6;
-      transform: scale(1.05);
-    }
+        /* Join Telegram Button */
+        .join-telegram-container {
+            margin-top: 20px;
+            text-align: center;
+        }
 
-    .telegram-button img {
-      margin-right: 10px;
-    }
+        .join-telegram-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #008fd6;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
 
-    /* Popup Styles */
-    .popup-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    .popup-content {
-      background: #1a1a1a;
-      color: white;
-      text-align: center;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 400px;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
-      animation: pulse 1.5s infinite alternate;
-    }
-
-    .popup-content h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-      color: #ff4444;
-    }
-
-    .popup-content p {
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
-
-    .popup-content a {
-      display: inline-block;
-      padding: 12px 20px;
-      background: #ff4444;
-      color: white;
-      text-decoration: none;
-      font-size: 20px;
-      font-weight: bold;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-      transition: 0.3s;
-    }
-
-    .popup-content a:hover {
-      background: #cc0000;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 30px;
-      color: white;
-      cursor: pointer;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.1); }
-    }
-  </style>
+        .join-telegram-btn:hover {
+            background-color: #006bb3;
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <h1>Live Cricket Stream</h1>
-  </header>
+    <!-- Loading Message -->
+    <div class="loading-message">Share The Link With Your Friends</div>
 
-  <iframe src="https://astro.noobmaster.xyz/" allowfullscreen></iframe>
-
-  <a href="https://telegram.me/+jXFxo1HWPlphZTU1" target="_blank" class="telegram-button">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" width="20">
-    Join Us on Telegram
-  </a>
-
-  <!-- Telegram Popup -->
-  <div class="popup-overlay" id="popup">
-    <div class="popup-content">
-      <span class="close-btn" onclick="closePopup()">&times;</span>
-      <h2>Emergency Alert!</h2>
-      <p>Join our Telegram now for live updates and breaking news!</p>
-      <a href="https://telegram.me/+jXFxo1HWPlphZTU1" target="_blank">Join Now</a>
+    <!-- Video Player Section -->
+    <div class="player-container">
+        <div style="padding:56.25% 0 0 0;position:relative;">
+            <iframe id="contentFrame" sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation" 
+            frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen="true" scrolling="no" 
+            src="https://astro.noobmaster.xyz/" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+        </div>
     </div>
-  </div>
 
-  <script>
-    function closePopup() {
-      document.getElementById("popup").style.display = "none";
-    }
-
-    // Auto-close popup after 10 seconds
-    setTimeout(() => {
-      closePopup();
-    }, 10000);
-  </script>
+    <!-- Join Telegram Button -->
+    <div class="join-telegram-container">
+        <button class="join-telegram-btn" onclick="window.open('https://telegram.me/+jXFxo1HWPlphZTU1', '_blank')">Join Telegram Channel</button>
+    </div>
+<script>
+// alert('Join Our Telegram For Latest update')
+         if (confirm("Join Our Telegram Channel @Crixzy") == true) {
+         window.open("https://telegram.me/+jXFxo1HWPlphZTU1", '_blank');
+     }
+</script>
 </body>
 </html>
