@@ -1,6 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Cricket View</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    /* Top animated strip */
+    .top-strip {
+      width: 100%;
+      background: #000;
+      text-align: center;
+      padding: 5px 0;
+    }
+
+    .top-strip img {
+      height: 40px;
+      object-fit: contain;
+    }
+
+    iframe {
+      border: none;
+      width: 100vw;
+      height: calc(100vh - 50px); /* Leaves space for the top strip */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated logo strip -->
+  <div class="top-strip">
+    <img src="animation.gif" alt="Animated Logo">
+  </div>
+
+  <!-- Live cricket view -->
+  <iframe src="https://m.cricketfastliveline.com/" allowfullscreen></iframe>
+
+</body>
+</html><!--DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Live Cricket View</title>
